@@ -1,11 +1,12 @@
 import Image from "next/legacy/image";
 import React from "react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import { HomeIcon } from "@heroicons/react/24/solid";
 
 export default function Header() {
   return (
     
-      <div className="flex items-center justify-between max-w-6xl">
+      <div className="flex items-center justify-between max-w-6xl mx-4 xl:mx-auto">
         {/*left logo*/}
         <div className=" cursor-pointer h-24 w-24 relative hidden lg:inline-grid ">
           <Image
@@ -34,7 +35,12 @@ export default function Header() {
         </div>
 
         {/*right perfil*/}
-        <h1>Right</h1>
+        <div className="flex space-x-4 items-center">
+          <PlusCircleIcon className="h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+          <HomeIcon className="hidden md:inline-flex h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+          <img src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" alt="user-image" className="h-10 rounded-full cursor-pointer" />
+        </div>
+        
       </div>
   
   );
