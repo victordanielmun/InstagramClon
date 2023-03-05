@@ -5,7 +5,8 @@ import { HomeIcon } from "@heroicons/react/24/solid";
 
 export default function Header() {
   return (
-    
+
+      <div className="shadow-sm border-b  sticky top-0 bg-white">
       <div className="flex items-center justify-between max-w-6xl mx-4 xl:mx-auto">
         {/*left logo*/}
         <div className=" cursor-pointer h-24 w-24 relative hidden lg:inline-grid ">
@@ -41,6 +42,7 @@ export default function Header() {
           <img src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" alt="user-image" className="h-10 rounded-full cursor-pointer" />
         </div>
         
+      </div>
       </div>
   
   );
