@@ -1,4 +1,4 @@
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline"
+import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon ,BookmarkIcon } from "@heroicons/react/24/outline"
 
 function Post({id, username, img, userImg, caption}) {
   return (
@@ -9,9 +9,18 @@ function Post({id, username, img, userImg, caption}) {
         <p className="font-bold flex-1 "> {username}</p>
         <EllipsisHorizontalIcon className="h-5" />
     </div>
+        {/* post imagen */}
     <img className="object-cover w-full" src={img} alt="" />
-
-
+        {/* post buttons */}
+    <div className="flex justify-between px-4 pt-4">
+        <div className="flex space-x-4">
+            <HeartIcon className="btn" />
+            <ChatBubbleOvalLeftEllipsisIcon className="btn" />
+            <BookmarkIcon className="btn" />
+        </div>
+    </div>
+     {/* Post comments */}
+     
     </div>
   )
 }
