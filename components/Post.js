@@ -16,8 +16,9 @@ function Post({id, username, img, userImg, caption}) {
         <div className="flex space-x-4">
             <HeartIcon className="btn" />
             <ChatBubbleOvalLeftEllipsisIcon className="btn" />
-            <BookmarkIcon className="btn" />
+            
         </div>
+        <BookmarkIcon className="btn" />
     </div>
      {/* Post comments */}
      <p className="p-5 truncate" ><span className=" font-bold mr-2 " >{username}</span>{caption}</p>
