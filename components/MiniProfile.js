@@ -1,14 +1,22 @@
-
+import { useSession, signOut } from "next-auth/react";
 
 function MiniProfile() {
+  const {data: session} = useSession();
+  console.log(session?.user.name);
+
   return (
     <div  className="flex items-center justify-between mt-14 ml-10">
-        <img className="h-16 rounded-full border p-[2px]" src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" alt="user-imagen" />
+        <img 
+        className="h-16 rounded-full border p-[2px]" 
+        src={session?.user.image} 
+        alt="user-imagen" />
         <div className="flex-1 ml-4">
-            <h2 className="font-bold ">Usuario</h2>
+            <h2 className="font-bold ">{session?.user.name}</h2>
             <h3 className="text-sm text-gray-400 ">Welcom to instagram</h3>
         </div>
-        <button className="font-semibold text-blue-400 text-sm">Sign Out</button>
+        <button 
+        className="font-semibold text-blue-400 text-sm" 
+        onClick={() => signOut()} >Sign Out</button>
     </div>
   )
 }
