@@ -2,12 +2,14 @@ import Image from "next/legacy/image";
 import React from "react";
 import { MagnifyingGlassIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import { HomeIcon } from "@heroicons/react/24/solid";
+import { useSession, signIn, signOut } from "next-auth/react"
 
 export default function Header() {
+    const {data: session} = useSession();
+    
   return (
-
-      <div className="shadow-sm border-b  sticky top-0 bg-white z-30">
-      <div className="flex items-center justify-between max-w-6xl mx-4 xl:mx-auto">
+  <div className="shadow-sm border-b  sticky top-0 bg-white z-30">
+    <div className="flex items-center justify-between max-w-6xl mx-4 xl:mx-auto">
         {/*left logo*/}
         <div className=" cursor-pointer h-24 w-24 relative hidden lg:inline-grid ">
           <Image
@@ -37,12 +39,23 @@ export default function Header() {
 
         {/*right perfil*/}
         <div className="flex space-x-4 items-center">
-          <PlusCircleIcon className="h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+          
           <HomeIcon className="hidden md:inline-flex h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
-          <img src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745" alt="user-image" className="h-10 rounded-full cursor-pointer" />
+          {session ? (
+            <>
+            <PlusCircleIcon className="h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+            <img
+            onClick={() => signOut()} 
+            src={session.user.image} 
+            alt="user-image" 
+            className="h-10 rounded-full cursor-pointer" 
+            />
+            </>
+          ): (
+            <button onClick={() => signIn()} >Sign In</button>
+          )}
+          </div>
         </div>
-        
-      </div>
       </div>
   
   );
