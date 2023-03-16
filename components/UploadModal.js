@@ -3,21 +3,55 @@ import {modalState} from "../atom/modalAtom"
 import Modal from "react-modal"
 import{CameraIcon} from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
+import {addDoc, collection, doc, serverTimestamp, updateDoc} from "firebase/firestore";
+import {db, storage} from "../firebase"
+import { useSession } from "next-auth/react";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 export default function UploadModal() {
     const [open, setOpen] = useRecoilState(modalState);
-    const filePickerRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const {data: session} = useSession();
+
     function addImageToPost(event){
-        const reader = new FileReader()
+        const reader = new FileReader();
         if (event.target.files[0]){
-          reader.readAsDataURL(event.target.files[0])
+          reader.readAsDataURL(event.target.files[0]);
         }
         reader.onload = (readerEvent) => {
           setSelectedFile(readerEvent.target.result)
         }
-        
     }
+
+    async function uploadPost(){
+      if(loading) return;
+
+      setLoading(true);
+
+      const docRef = await addDoc(collection(db, "post"), {
+          caption: captionRef.current.value,
+          username: session.user.username,
+          profileImg: session.user.image,
+          timerStamp: serverTimestamp(),
+      });
+
+      const imageRef = ref(storage, `posts/${docRef.id}/image`)
+      await uploadString(imageRef, selectedFile, "data_url").then(
+        async(snapshot)=>{
+          const downloadURL = await getDownloadURL(imageRef);
+          await updateDoc(doc(db, "post", docRef.id),{
+            image:downloadURL,
+          });
+        }
+      );
+      setOpen(false);
+      setLoading(false);
+      setSelectedFile(null);
+    };
+
+    const filePickerRef = useRef(null);
+    const captionRef = useRef(null);
 
   return (
     <div><h1>Modal</h1>
@@ -30,7 +64,8 @@ export default function UploadModal() {
         setSelectedFile(null);
         }} >
         <div className="flex flex-col justify-center items-center h-[100%]">
-          {selectedFile ? (<img 
+          {selectedFile ? (
+          <img 
           src={selectedFile} 
           alt="imagen" 
           onClick={()=>setSelectedFile(null)}
@@ -38,11 +73,22 @@ export default function UploadModal() {
           />):(<CameraIcon 
         onClick={()=>filePickerRef.current.click()}
         className="cursor-pointer h-14 bg-red-200  p-2 rounded-full border-2 text-red-500 "/>)}
-        <h1>Modal</h1>
-        
-        <input type="file" hidden  ref={filePickerRef} onChange={addImageToPost} />
-        <input type="text"  maxLength="150" placeholder="Porfavor Ingresa tu comentario" className="m-4 border-none text-center w-full focus:rin-0 " /> 
-        <button disabled 
+        <input 
+        type="file" 
+        hidden  
+        ref={filePickerRef} 
+        onChange={addImageToPost} 
+        />
+
+        <input 
+        type="text"  
+        maxLength="150" 
+        placeholder="Porfavor Ingresa tu comentario" 
+        className="m-4 border-none text-center w-full focus:rin-0 " 
+        ref={captionRef}
+        /> 
+        <button disabled={!selectedFile || loading}
+        onClick={uploadPost}
         className=" w-full bg-red-600 text-white p-2 shadow-md hover:brightness-125 disabled:bg-gray-200 disable:cursor-not-allowed disabled:hover:brightness-100" 
         >Subir Post</button>
         </div>
