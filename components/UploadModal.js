@@ -29,18 +29,18 @@ export default function UploadModal() {
 
       setLoading(true);
 
-      const docRef = await addDoc(collection(db, "post"), {
+      const docRef = await addDoc(collection(db, "posts"), {
           caption: captionRef.current.value,
           username: session.user.username,
           profileImg: session.user.image,
-          timerStamp: serverTimestamp(),
+          timestamp: serverTimestamp(),
       });
 
       const imageRef = ref(storage, `posts/${docRef.id}/image`)
       await uploadString(imageRef, selectedFile, "data_url").then(
         async(snapshot)=>{
           const downloadURL = await getDownloadURL(imageRef);
-          await updateDoc(doc(db, "post", docRef.id),{
+          await updateDoc(doc(db, "posts", docRef.id),{
             image:downloadURL,
           });
         }
@@ -54,7 +54,7 @@ export default function UploadModal() {
     const captionRef = useRef(null);
 
   return (
-    <div><h1>Modal</h1>
+    <div>
     {open && (
       <Modal 
       className="max-w-lg w-[90%] p-6 absolute top-56 left-[50%] translate-x-[-50%] bg-white border-2 rounded-md shadow-md"
