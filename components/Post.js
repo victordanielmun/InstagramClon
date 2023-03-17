@@ -1,11 +1,27 @@
-import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon ,BookmarkIcon, FaceSmileIcon } from "@heroicons/react/24/outline"
+import { EllipsisHorizontalIcon, HeartIcon, ChatBubbleOvalLeftEllipsisIcon ,BookmarkIcon, FaceSmileIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import {addDoc, collection, serverTimestamp} from "firebase/firestore";
+import { db } from "../firebase";
+import { useRecoilState } from "recoil";
+import { userState } from "../atom/userAtom";
 import { useSession } from "next-auth/react"
-import { useRouter } from "next/router";
-
 
 function Post({id, username, img, userImg, caption}) {
+  const [comment, setComment] = useState("");
+  const [currentUser] = useRecoilState(userState)
   const {data: session} = useSession();
-  const router = useRouter();
+
+  async function sendComment(event){
+    event.preventDefault();
+    const commentToSend = comment;
+    setComment("")
+    await addDoc(collection(db, "posts", id, "comments"), {
+      comment: commentToSend,
+      username: session.user.username,
+      userImage: session.user.image,
+      timestamp: serverTimestamp(),
+    })
+  }
 
     return (
     <div className="bg-white my-7 border rounded-md">
@@ -39,8 +55,18 @@ function Post({id, username, img, userImg, caption}) {
      {session && (
      <form className="flex items-center p-4 " >
         <FaceSmileIcon className="h-7" />
-        <input className="border-none flex-1 focus:ring-0" type="text" placeholder="Enter your comment..." />
-        <button className="text-blue-400 font-bold" >Post</button>
+        <input 
+        value={comment} 
+        onChange={(event)=>setComment(event.target.value)}
+        className="border-none flex-1 focus:ring-0" 
+        type="text" 
+        placeholder="Enter your comment..." 
+        />
+        <button 
+        type="submit"
+        onClick={sendComment}
+        disabled={!comment.trim()} 
+        className="text-blue-400 font-bold disabled:text-blue-200" >Post</button>
      </form>
      )}
      

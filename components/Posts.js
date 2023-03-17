@@ -26,19 +26,29 @@ function Posts() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(false);
 
+  async function getFirebaseData() {
+    
+    
+  }
+
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, "posts"), orderBy("timestamp", "desc")),
-      (snapshot) => {
-        setPosts(snapshot.docs);
-        console.log(posts)
-      },
-      (error) => {
+    async function fetchData() {
+      try {
+        const unsubscribe = await onSnapshot(
+          query(collection(db, "posts"), orderBy("timestamp", "desc")),
+          (snapshot) => {
+            setPosts(snapshot.docs);
+            console.log(posts)
+            return () => unsubscribe();
+          }
+        );
+      } catch (error) {
+        console.error(error);
         setError(true);
-        
       }
-    );
-    return () => unsubscribe();
+    }
+    fetchData();
+    
   }, [db]);
 
   return (
