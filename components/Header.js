@@ -5,11 +5,12 @@ import { HomeIcon } from "@heroicons/react/24/solid";
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useRecoilState } from "recoil";
 import { modalState } from "../atom/modalAtom";
+import { useRouter } from "next/router"
 
 export default function Header() {
     const {data: session} = useSession();
     const [open, setOpen] = useRecoilState(modalState)
-
+    const router = useRouter();
     
 
   return (
@@ -20,14 +21,16 @@ export default function Header() {
           <Image
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/1280px-Instagram_logo.svg.png"
             layout="fill"
-            className="object-contain"
+            className="object-contain" 
+            onClick={()=>router.push("/")}
           />
         </div>
         <div className=" cursor-pointer h-24 w-10 relative lg:hidden ">
           <Image
             src="https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png"
             layout="fill"
-            className="object-contain"
+            className="object-contain" 
+            onClick={()=>router.push("/")}
           />
         </div>
         {/*center search*/}
@@ -45,7 +48,10 @@ export default function Header() {
         {/*right perfil*/}
         <div className="flex space-x-4 items-center">
           
-          <HomeIcon className="hidden md:inline-flex h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" />
+          <HomeIcon 
+          className="hidden md:inline-flex h-6 cursor-pointer hover:scale-125 transition-transform duration-200 ease-out" 
+          onClick={()=>router.push("/")} 
+          />
           {session ? (
             <>
             <PlusCircleIcon  
