@@ -5,14 +5,18 @@ import {
   BookmarkIcon,
   FaceSmileIcon,
 } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
 import { useState, useEffect } from "react";
 import {
   addDoc,
+  setDoc,
+  doc,
   collection,
   serverTimestamp,
   query,
   orderBy,
   onSnapshot,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useRecoilState } from "recoil";
@@ -24,8 +28,11 @@ function Post({ id, username, img, userImg, caption }) {
   const [comment, setComment] = useState("");
   const [currentUser] = useRecoilState(userState);
   const [comments, setComments] = useState([]);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [likes, setLikes] = useState([]);
   const { data: session } = useSession();
 
+  // get comentarios de firebase
   useEffect(() => {
     async function fetchData() {
       try {
@@ -45,6 +52,32 @@ function Post({ id, username, img, userImg, caption }) {
     fetchData();
   }, [db, id]);
 
+  // Obtener likes
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "posts", id, "likes"),
+      (snapshot) => setLikes(snapshot.docs)
+    );
+  }, [db]);
+
+  // Revisar si usuario dio like al post
+  useEffect(() => {
+    setHasLiked(likes.findIndex((like) => like.id === session.user.uid) !== -1);
+  }, [likes]);
+
+    // envio like
+  async function likePost() {
+    if (hasLiked) {
+      await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));
+    } else {
+      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
+        username: session.user.username,
+      });
+    }
+    
+  }
+
+  // envio comentario
   async function sendComment(event) {
     event.preventDefault();
     const commentToSend = comment;
@@ -76,7 +109,14 @@ function Post({ id, username, img, userImg, caption }) {
       {session && (
         <div className="flex justify-between px-4 pt-4">
           <div className="flex space-x-4">
-            <HeartIcon className="btn" />
+            {hasLiked ? (
+              <HeartIconFilled
+                onClick={likePost}
+                className="text-red-400 btn"
+              />
+            ) : (
+              <HeartIcon onClick={likePost} className="btn" />
+            )}
             <ChatBubbleOvalLeftEllipsisIcon className="btn" />
           </div>
           <BookmarkIcon className="btn" />
@@ -91,11 +131,15 @@ function Post({ id, username, img, userImg, caption }) {
       {comments.length > 0 && (
         <div className="mx-10 max-h-24 overflow-y-scroll scrollbar-none">
           {comments.map((comment) => (
-            <div 
-            className="flex items-center space-x-2 mb-2" 
-            key={comment.data().id}
+            <div
+              className="flex items-center space-x-2 mb-2"
+              key={comment.data().id}
             >
-              <img className="h-7 rounded-full object-cover" src={comment.data().userImage} alt="user-image" />
+              <img
+                className="h-7 rounded-full object-cover"
+                src={comment.data().userImage}
+                alt="user-image"
+              />
               <p className="font-semibold ">{comment.data().comment}</p>
               <p className="flex-1 truncate ">{comment.data().username}</p>
               <Moment fromNow>{comment.data().timestamp?.toDate()}</Moment>
@@ -115,8 +159,8 @@ function Post({ id, username, img, userImg, caption }) {
           />
           <button
             type="submit"
-            onClick={sendComment} 
-            disabled={!comment.trim()} 
+            onClick={sendComment}
+            disabled={!comment.trim()}
             className="text-blue-400 font-bold disabled:text-blue-200"
           >
             Post
