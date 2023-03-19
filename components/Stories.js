@@ -1,12 +1,16 @@
+import { userState } from "@/atom/userAtom";
 import minifaker from "minifaker";
 import "minifaker/locales/en";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import Story from "./Story";
-import {useSession} from "next-auth/react"
+
 
 export default function Stories() {
   const [storyUsers, setStoryUser] = useState([]);
-  const {data: session} = useSession()
+  const [currentUser] = useRecoilState(userState);
+
+  //generar array minifaker 20 perfiles
   useEffect(() => {
     const storyUsers = minifaker.array(20, (i) => ({
       username: minifaker.username({ locale: "en" }).toLowerCase(),
@@ -18,8 +22,8 @@ export default function Stories() {
 
   return (
     <div className="flex space-x-2 p-6 bg-white mt-8 border-gray-200 border overflow-x-scroll rounded-sm scrollbar-none">
-    {session && (
-    <Story img={session?.user.image} username={session?.user.name} isUser="true"/>)}
+    {currentUser && (
+    <Story img={currentUser?.userImg} username={currentUser?.name} isUser="true"/>)}
     {storyUsers.map(user=>(
         <Story key={user.id} username={user.username} img={user.img} />
     ))}

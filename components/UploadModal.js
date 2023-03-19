@@ -5,15 +5,16 @@ import{CameraIcon} from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import {addDoc, collection, doc, serverTimestamp, updateDoc} from "firebase/firestore";
 import {db, storage} from "../firebase"
-import { useSession } from "next-auth/react";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { userState } from "@/atom/userAtom";
 
 export default function UploadModal() {
     const [open, setOpen] = useRecoilState(modalState);
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
-    const {data: session} = useSession();
+    const [currentUser] = useRecoilState(userState)
 
+      //funcion cargar imagen
     function addImageToPost(event){
         const reader = new FileReader();
         if (event.target.files[0]){
@@ -24,6 +25,7 @@ export default function UploadModal() {
         }
     }
 
+    // funcion subir post
     async function uploadPost(){
       if(loading) return;
 
@@ -31,8 +33,8 @@ export default function UploadModal() {
 
       const docRef = await addDoc(collection(db, "posts"), {
           caption: captionRef.current.value,
-          username: session.user.username,
-          profileImg: session.user.image,
+          username: currentUser?.username,
+          profileImg: currentUser?.userImg,
           timestamp: serverTimestamp(),
       });
 

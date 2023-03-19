@@ -21,16 +21,15 @@ import {
 import { db } from "../firebase";
 import { useRecoilState } from "recoil";
 import { userState } from "../atom/userAtom";
-import { useSession } from "next-auth/react";
 import Moment, { moment } from "react-moment";
 
 function Post({ id, username, img, userImg, caption }) {
   const [comment, setComment] = useState("");
-  const [currentUser] = useRecoilState(userState);
   const [comments, setComments] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
   const [likes, setLikes] = useState([]);
-  const { data: session } = useSession();
+  const [currentUser] = useRecoilState(userState);
+
 
   // get comentarios de firebase
   useEffect(() => {
@@ -62,16 +61,17 @@ function Post({ id, username, img, userImg, caption }) {
 
   // Revisar si usuario dio like al post
   useEffect(() => {
-    setHasLiked(likes.findIndex((like) => like.id === session.user.uid) !== -1);
+    setHasLiked(likes.findIndex((like) => like.id === currentUser?.uid) !== -1
+    );
   }, [likes]);
 
     // envio like
   async function likePost() {
     if (hasLiked) {
-      await deleteDoc(doc(db, "posts", id, "likes", session.user.uid));
+      await deleteDoc(doc(db, "posts", id, "likes", currentUser?.uid));
     } else {
-      await setDoc(doc(db, "posts", id, "likes", session.user.uid), {
-        username: session.user.username,
+      await setDoc(doc(db, "posts", id, "likes", currentUser?.uid), {
+        username: currentUser?.username,
       });
     }
     
@@ -84,8 +84,8 @@ function Post({ id, username, img, userImg, caption }) {
     setComment("");
     await addDoc(collection(db, "posts", id, "comments"), {
       comment: commentToSend,
-      username: session.user.username,
-      userImage: session.user.image,
+      username: currentUser?.username,
+      userImage: currentUser?.userImg,
       timestamp: serverTimestamp(),
     });
   }
@@ -106,7 +106,7 @@ function Post({ id, username, img, userImg, caption }) {
       <img className="object-cover w-full" src={img} alt="" />
       {/* post buttons */}
 
-      {session && (
+      {currentUser && (
         <div className="flex justify-between px-4 pt-4">
           <div className="flex space-x-4">
             {hasLiked ? (
@@ -123,9 +123,10 @@ function Post({ id, username, img, userImg, caption }) {
         </div>
       )}
 
-      {/* Post comments */}
+       {/* Post comments */}
       <p className="p-5 truncate">
-        <span className=" font-bold mr-2 ">{username}</span>
+        {likes.length > 0 && (<p className="font-bold mb-1 ">{likes.length} Likes</p>)}
+        <span className=" font-bold mr-2 ">{username} </span>
         {caption}
       </p>
       {comments.length > 0 && (
@@ -140,14 +141,14 @@ function Post({ id, username, img, userImg, caption }) {
                 src={comment.data().userImage}
                 alt="user-image"
               />
-              <p className="font-semibold ">{comment.data().comment}</p>
-              <p className="flex-1 truncate ">{comment.data().username}</p>
+              <p className="font-semibold ">{comment.data().username}</p>
+              <p className="flex-1 truncate ">{comment.data().comment}</p>
               <Moment fromNow>{comment.data().timestamp?.toDate()}</Moment>
             </div>
           ))}
         </div>
       )}
-      {session && (
+      {currentUser && (
         <form className="flex items-center p-4 ">
           <FaceSmileIcon className="h-7" />
           <input

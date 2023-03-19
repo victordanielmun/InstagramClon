@@ -25,12 +25,8 @@ function Posts() {
   ];
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(false);
-
-  async function getFirebaseData() {
-    
-    
-  }
-
+  
+  //obtener datos posts de todos los usuarios
   useEffect(() => {
     async function fetchData() {
       try {
@@ -49,7 +45,7 @@ function Posts() {
     }
     fetchData();
     
-  }, [db]);
+  }, [db, posts]);
 
   return (
     <div>
