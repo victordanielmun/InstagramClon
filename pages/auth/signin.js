@@ -1,10 +1,11 @@
+import Image from "next/legacy/image";
 import Header from "@/components/Header";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
-import { app, db } from "../../firebase";
+import { db } from "../../firebase";
 import { useRouter } from "next/router";
 
-export default function signin() {
+export default function SignIn() {
   const router = useRouter();
   //Login con google y creacion usuario en firebaseStore
   async function onGoogleClick() {
@@ -42,7 +43,7 @@ export default function signin() {
         />
         <div className="">
           <div className="flex flex-col items-center">
-            <img
+            <Image
               className="w-32 object-cover "
               src="https://eltallerdehector.com/wp-content/uploads/2022/06/7fac6-logo-instagram-transparent.png"
             />
