@@ -41,23 +41,24 @@ export default function SignIn() {
     <div class="flex-1">
     <Spline className="absolute m-0 w-1/3" scene="https://prod.spline.design/ELm-RoZN8MgFalmh/scene.splinecode" />
     </div>
-    <div className="relative">
-            <div className="items-center ">
+    <div className="flex-container">
+            <div className="">
             <img
-              className="w-32 object-cover mt-10 pt-10 w-1/3"
+              className="w-1/3 object-cover mt-10 pt-10"
               src="https://eltallerdehector.com/wp-content/uploads/2022/06/7fac6-logo-instagram-transparent.png"
             />
-    <p className="text-[20px] my-20 text-center font-semibold w-1/3">
+            </div>
+    <p className="text-[20px] my-20 font-semibold w-1/3">
               Esta pagina es creada como proyecto para portafolio con fines de
               aprendizaje puedes loguearte con Google para testearla.
             </p>
             <button
               onClick={onGoogleClick}
-              className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500 w-1/3"
+              className="w-1/3 bg-red-400 rounded-lg p-3 text-white hover:bg-red-500 "
             >
               Login con Google
             </button>
-            </div>
+            
   </div>
   </div>
         
