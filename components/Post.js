@@ -47,7 +47,7 @@ function Post({ id, username, img, userImg, caption }) {
       } catch (error) {
         console.error(error);
       }
-    }
+    };
     fetchData();
   }, [db, id]);
 

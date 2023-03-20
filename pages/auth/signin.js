@@ -3,9 +3,14 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRouter } from "next/router";
+import Spline from '@splinetool/react-spline';
+import {ContentLogin} from "@/components/ContentLogin";
+import { useState } from "react";
+
 
 export default function SignIn() {
   const router = useRouter();
+  
   //Login con google y creacion usuario en firebaseStore
   async function onGoogleClick() {
     try {
@@ -32,34 +37,31 @@ export default function SignIn() {
   }
 
   return (
-    <>
-      <Header />
-      <div className="flex justify-center space-x-7 mt-20">
-        <img
-          className="hidden object-cover rotate-6 md:inline-flex md:w-48 "
-          src="https://superviral.com.au/wp-content/uploads/2021/10/Buy-Instagram-Followers-Australia.png"
-          alt="instagram"
-        />
-        <div className="">
-          <div className="flex flex-col items-center">
+    <div class="flex items-center flex-col">
+    <div class="flex-1">
+    <Spline className="absolute m-0 w-1/3" scene="https://prod.spline.design/ELm-RoZN8MgFalmh/scene.splinecode" />
+    </div>
+    <div className="relative">
+            <div className="items-center ">
             <img
-              className="w-32 object-cover "
+              className="w-32 object-cover mt-10 pt-10 w-1/3"
               src="https://eltallerdehector.com/wp-content/uploads/2022/06/7fac6-logo-instagram-transparent.png"
             />
-
-            <p className="text-sm italic my-10 text-center m-10">
+    <p className="text-[20px] my-20 text-center font-semibold w-1/3">
               Esta pagina es creada como proyecto para portafolio con fines de
               aprendizaje puedes loguearte con Google para testearla.
             </p>
             <button
               onClick={onGoogleClick}
-              className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500"
+              className="bg-red-400 rounded-lg p-3 text-white hover:bg-red-500 w-1/3"
             >
               Login con Google
             </button>
-          </div>
-        </div>
-      </div>
-    </>
+            </div>
+  </div>
+  </div>
+        
+
+    
   );
 }
